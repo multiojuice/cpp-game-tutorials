@@ -2,6 +2,12 @@
 
 using namespace sf;
 
+struct cloud {
+    float speed;
+    bool isActive;
+    Sprite sprite;
+} ;
+
 int main() {
     VideoMode vm(1920,1080);
 
@@ -33,24 +39,17 @@ int main() {
     //The Clouds
     Texture textureCloud;
     textureCloud.loadFromFile("../assets/cloud.png");
-    Sprite spriteCloud1;
-    Sprite spriteCloud2;
-    Sprite spriteCloud3;
+    cloud clouds [3];
+    for (int i = 0; i < 3; i++) {
+        cloud spriteCloud;
+        spriteCloud.sprite.setTexture(textureCloud);
+        spriteCloud.sprite.setPosition(0,250 * i);
+        spriteCloud.isActive = false;
+        spriteCloud.speed = 0.0f;
+        clouds[i] = spriteCloud;
+    }
 
-    spriteCloud1.setTexture(textureCloud);
-    spriteCloud2.setTexture(textureCloud);
-    spriteCloud3.setTexture(textureCloud);
-
-    spriteCloud1.setPosition(0,0);
-    spriteCloud2.setPosition(0,250);
-    spriteCloud3.setPosition(0,500);
-
-    bool cloud1Active = false;
-    bool cloud2Active = false;
-    bool cloud3Active = false;
-    float cloud1Speed = 0.0f;
-    float cloud2Speed = 0.0f;
-    float cloud3Speed = 0.0f;
+    Clock clock;
 
     // GAME LOOP
     while (window.isOpen()) {
@@ -70,6 +69,27 @@ int main() {
          * ********************
         */
 
+        Time dt = clock.restart();
+
+        if (!beeActive) {
+            srand((int)time(0) * 10);
+            beeSpeed = (rand() % 200) + 200;
+
+            srand((int)time(0) * 10);
+            float height = (rand() % 500) + 500;
+            spriteBee.setPosition(2000, height);
+            beeActive = true;
+        } else {
+            spriteBee.setPosition(
+                    spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()),
+                    spriteBee.getPosition().y);
+
+            if (spriteBee.getPosition().x < -100) {
+                beeActive = false;
+            }
+        }
+
+
         /*
          * ********************
          * Draw the scene
@@ -78,9 +98,9 @@ int main() {
         window.clear();
 
         window.draw(spriteBackground);
-        window.draw(spriteCloud1);
-        window.draw(spriteCloud2);
-        window.draw(spriteCloud3);
+        for (int i = 0; i < 3; i++) {
+            window.draw(clouds[i].sprite);
+        }
         window.draw(spriteTree);
         window.draw(spriteBee);
 
