@@ -89,6 +89,25 @@ int main() {
             }
         }
 
+        for (int i = 0; i < 3; i++) {
+            if (!clouds[i].isActive) {
+                srand((int)time(0) * 10 * (i + 1));
+                clouds[i].speed = (rand() % 200);
+
+                srand((int)time(0) * 10 * (i + 1));
+                float height = (rand() % 150);
+                clouds[i].sprite.setPosition(-200, height);
+                clouds[i].isActive = true;
+            } else {
+                clouds[i].sprite.setPosition(
+                        clouds[i].sprite.getPosition().x + (clouds[i].speed * dt.asSeconds()),
+                        clouds[i].sprite.getPosition().y);
+
+                if (clouds[i].sprite.getPosition().x > 1920) {
+                    clouds[i].speed = false;
+                }
+            }
+        }
 
         /*
          * ********************
