@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-
+#include <sstream>
 using namespace sf;
 
 struct cloud {
@@ -49,7 +49,46 @@ int main() {
         clouds[i] = spriteCloud;
     }
 
+    // Texts and Fonts
+    int score = 0;
+    Text messageText;
+    Text scoreText;
+
+    Font font;
+    font.loadFromFile("../assets/KOMIKAP_.ttf");
+    messageText.setFont(font);
+    scoreText.setFont(font);
+
+    messageText.setString("Press enter to begin!");
+    scoreText.setString("Score = 0");
+    messageText.setCharacterSize(75);
+    scoreText.setCharacterSize(100);
+    messageText.setFillColor(Color::White);
+    scoreText.setFillColor(Color::White);
+
+    // position the text
+    scoreText.setPosition(20,20);
+    FloatRect textRect = messageText.getLocalBounds();
+    messageText.setOrigin(
+            textRect.left + textRect.width / 2.0f,
+            textRect.top + textRect.height / 2.0f
+            );
+    messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+    // The Time bar
+    RectangleShape timeBar;
+    float timeBarStartWidth = 400;
+    float timeBarHeight = 80;
+    timeBar.setSize(Vector2f(timeBarStartWidth, timeBarHeight));
+    timeBar.setFillColor(Color::Red);
+    timeBar.setPosition((1920 / 2) - (timeBarStartWidth / 2), 980);
+
+    Time gameTimeTotal;
+    float timeRemaining = 6.0f;
+    float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
+
     Clock clock;
+    bool paused = true;
 
     // GAME LOOP
     while (window.isOpen()) {
@@ -62,6 +101,11 @@ int main() {
         if (Keyboard::isKeyPressed(Keyboard::Escape)) {
             window.close();
         }
+            if (Keyboard::isKeyPressed(Keyboard::Return)) {
+            paused = false;
+            score = 0;
+            timeRemaining = 5;
+        }
 
         /*
          * ********************
@@ -70,44 +114,65 @@ int main() {
         */
 
         Time dt = clock.restart();
+        
+        if (timeRemaining <= 0.0f) {
+            paused = true;
+            messageText.setString("Out of time!");
 
-        if (!beeActive) {
-            srand((int)time(0) * 10);
-            beeSpeed = (rand() % 200) + 200;
-
-            srand((int)time(0) * 10);
-            float height = (rand() % 500) + 500;
-            spriteBee.setPosition(2000, height);
-            beeActive = true;
+            messageText.setOrigin(
+                    textRect.left + textRect.width / 2.0f,
+                    textRect.top + textRect.height / 2.0f
+            );
+            messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
         } else {
-            spriteBee.setPosition(
-                    spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()),
-                    spriteBee.getPosition().y);
-
-            if (spriteBee.getPosition().x < -100) {
-                beeActive = false;
-            }
+            timeRemaining -= dt.asSeconds();
+            timeBar.setSize(Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
         }
 
-        for (int i = 0; i < 3; i++) {
-            if (!clouds[i].isActive) {
-                srand((int)time(0) * 10 * (i + 1));
-                clouds[i].speed = (rand() % 200);
+        if(!paused) {
+            if (!beeActive) {
+                srand((int) time(0) * 10);
+                beeSpeed = (rand() % 200) + 200;
 
-                srand((int)time(0) * 10 * (i + 1));
-                float height = (rand() % 150);
-                clouds[i].sprite.setPosition(-200, height);
-                clouds[i].isActive = true;
+                srand((int) time(0) * 10);
+                float height = (rand() % 500) + 500;
+                spriteBee.setPosition(2000, height);
+                beeActive = true;
             } else {
-                clouds[i].sprite.setPosition(
-                        clouds[i].sprite.getPosition().x + (clouds[i].speed * dt.asSeconds()),
-                        clouds[i].sprite.getPosition().y);
+                spriteBee.setPosition(
+                        spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()),
+                        spriteBee.getPosition().y);
 
-                if (clouds[i].sprite.getPosition().x > 1920) {
-                    clouds[i].speed = false;
+                if (spriteBee.getPosition().x < -100) {
+                    beeActive = false;
+                }
+            }
+
+            for (int i = 0; i < 3; i++) {
+                if (!clouds[i].isActive) {
+                    srand((int) time(0) * 10 * (i + 1));
+                    clouds[i].speed = (rand() % 200);
+
+                    srand((int) time(0) * 10 * (i + 1));
+                    float height = (rand() % 150);
+                    clouds[i].sprite.setPosition(-200, height);
+                    clouds[i].isActive = true;
+                } else {
+                    clouds[i].sprite.setPosition(
+                            clouds[i].sprite.getPosition().x + (clouds[i].speed * dt.asSeconds()),
+                            clouds[i].sprite.getPosition().y);
+
+                    if (clouds[i].sprite.getPosition().x > 1920) {
+                        clouds[i].isActive = false;
+                    }
                 }
             }
         }
+
+        // Update the score
+        std::stringstream ss;
+        ss << "Score = " << score;
+        scoreText.setString(ss.str());
 
         /*
          * ********************
@@ -120,9 +185,13 @@ int main() {
         for (int i = 0; i < 3; i++) {
             window.draw(clouds[i].sprite);
         }
+
         window.draw(spriteTree);
         window.draw(spriteBee);
 
+        window.draw(scoreText);
+        window.draw(timeBar);
+        if (paused) window.draw(messageText);
         window.display();
 
     }
