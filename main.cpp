@@ -132,6 +132,8 @@ int main() {
     Clock clock;
     bool paused = true;
 
+    bool acceptInput = true;
+
     // Deal with branches
     Texture textureBranch;
     textureBranch.loadFromFile("../assets/branch.png");
@@ -150,13 +152,67 @@ int main() {
          * Handle Player Input
          * ********************
         */
+
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::KeyReleased && !paused) {
+                acceptInput = true;
+                spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+            }
+        }
+
         if (Keyboard::isKeyPressed(Keyboard::Escape)) {
             window.close();
         }
-            if (Keyboard::isKeyPressed(Keyboard::Return)) {
+
+        if (Keyboard::isKeyPressed(Keyboard::Return)) {
             paused = false;
             score = 0;
             timeRemaining = 5;
+
+            for (int i = 0; i < NUM_BRANCHES; i++) {
+                branchPositions[i] = side::NONE;
+            }
+
+            spriteRIP.setPosition(675, 2000);
+            spritePlayer.setPosition(580, 720);
+            acceptInput = true;
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::Left) && acceptInput) {
+            playerSide = side::LEFT;
+            score ++;
+
+            timeRemaining += (2 / score) + .15;
+
+            spriteAxe.setPosition(AXE_POSITION_LEFT, spriteAxe.getPosition().y);
+            spritePlayer.setPosition(580, 700);
+
+            updateBranches(score);
+
+            spriteLog.setPosition(810, 720);
+            logSpeedX = 5000;
+            logActive = true;
+
+            acceptInput = false;
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::Right) && acceptInput) {
+            playerSide = side::RIGHT;
+            score ++;
+
+            timeRemaining += (2 / score) + .15;
+
+            spriteAxe.setPosition(AXE_POSITION_RIGHT, spriteAxe.getPosition().y);
+            spritePlayer.setPosition(1200, 700);
+
+            updateBranches(score);
+
+            spriteLog.setPosition(810, 720);
+            logSpeedX = -5000;
+            logActive = true;
+
+            acceptInput = false;
         }
 
         /*
@@ -182,6 +238,17 @@ int main() {
         }
 
         if(!paused) {
+            if (logActive) {
+                spriteLog.setPosition(
+                        spriteLog.getPosition().x + (logSpeedX * dt.asSeconds()),
+                        spriteLog.getPosition().y + (logSpeedY * dt.asSeconds())
+                        );
+                if (spriteLog.getPosition().x < -100 || spriteLog.getPosition().x > 2000) {
+                    logActive = false;
+                    spriteLog.setPosition(810, 720);
+                }
+            }
+
             if (!beeActive) {
                 srand((int) time(0) * 10);
                 beeSpeed = (rand() % 200) + 200;
