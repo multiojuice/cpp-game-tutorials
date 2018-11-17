@@ -56,6 +56,41 @@ int main() {
         clouds[i] = spriteCloud;
     }
 
+    // The player
+    Texture texturePlayer;
+    texturePlayer.loadFromFile("../assets/player.png");
+    Sprite spritePlayer;
+    spritePlayer.setTexture(texturePlayer);
+    spritePlayer.setPosition(580, 720);
+    side playerSide = side::LEFT;
+
+    // Gravestone
+    Texture textureRIP;
+    textureRIP.loadFromFile("../assets/rip.png");
+    Sprite spriteRIP;
+    spriteRIP.setTexture(textureRIP);
+    spriteRIP.setPosition(600, 860);
+
+    // Prepare Axe
+    Texture textureAxe;
+    textureAxe.loadFromFile("../assets/axe.png");
+    Sprite spriteAxe;
+    spriteAxe.setTexture(textureAxe);
+    const float AXE_POSITION_LEFT = 700;
+    const float AXE_POSITION_RIGHT = 1075;
+    spriteAxe.setPosition(AXE_POSITION_LEFT, 830);
+
+    // Preparing Flying log
+    Texture textureLog;
+    textureLog.loadFromFile("../assets/log.png");
+    Sprite spriteLog;
+    spriteLog.setTexture(textureLog);
+    spriteLog.setPosition(810, 720);
+
+    bool logActive = false;
+    float logSpeedX = 1000;
+    float logSpeedY = -1500;
+
     // Texts and Fonts
     int score = 0;
     Text messageText;
@@ -222,6 +257,12 @@ int main() {
         }
 
         window.draw(spriteTree);
+
+        window.draw(spritePlayer);
+        window.draw(spriteAxe);
+        window.draw(spriteLog);
+        window.draw(spriteRIP);
+
         window.draw(spriteBee);
 
         window.draw(scoreText);
