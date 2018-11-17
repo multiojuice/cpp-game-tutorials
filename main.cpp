@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <sstream>
 using namespace sf;
 
@@ -90,6 +91,23 @@ int main() {
     bool logActive = false;
     float logSpeedX = 1000;
     float logSpeedY = -1500;
+
+    // THE SOUNDS
+    SoundBuffer soundBufferChop;
+    soundBufferChop.loadFromFile("../assets/chop.wav");
+    Sound soundChop;
+    soundChop.setBuffer(soundBufferChop);
+
+    SoundBuffer soundBufferSquish;
+    soundBufferSquish.loadFromFile("../assets/death.wav");
+    Sound soundSquish;
+    soundSquish.setBuffer(soundBufferSquish);
+
+    SoundBuffer soundBufferTime;
+    soundBufferTime.loadFromFile("../assets/out_of_time.wav");
+    Sound soundTime;
+    soundTime.setBuffer(soundBufferTime);
+
 
     // Texts and Fonts
     int score = 0;
@@ -195,6 +213,7 @@ int main() {
             logActive = true;
 
             acceptInput = false;
+            soundChop.play();
         }
 
         if (Keyboard::isKeyPressed(Keyboard::Right) && acceptInput) {
@@ -213,6 +232,7 @@ int main() {
             logActive = true;
 
             acceptInput = false;
+            soundChop.play();
         }
 
         /*
@@ -235,11 +255,12 @@ int main() {
                         textRect.top + textRect.height / 2.0f
                 );
                 messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+                soundTime.play();
             } else {
                 timeRemaining -= dt.asSeconds();
                 timeBar.setSize(Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
             }
-            
+
             if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
                 // He die
                 paused = true;
@@ -255,6 +276,7 @@ int main() {
                         textRect.top + textRect.height / 2.0f
                 );
                 messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+                soundSquish.play();
             }
 
             if (logActive) {
