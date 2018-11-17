@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
-project(timber_tutorial)
+project(cpp-game-tutorials)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(timber_tutorial timber.cpp)
-target_link_libraries (timber_tutorial sfml-graphics sfml-audio sfml-window sfml-system)
+add_executable(timber timber.cpp)
+target_link_libraries (timber sfml-graphics sfml-audio sfml-window sfml-system)
+
+add_executable(zombie zombie.cpp)
