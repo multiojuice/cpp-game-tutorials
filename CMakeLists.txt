@@ -3,5 +3,5 @@ project(timber_tutorial)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(timber_tutorial main.cpp)
+add_executable(timber_tutorial timber.cpp)
 target_link_libraries (timber_tutorial sfml-graphics sfml-audio sfml-window sfml-system)

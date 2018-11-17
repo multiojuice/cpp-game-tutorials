@@ -150,7 +150,7 @@ int main() {
     Clock clock;
     bool paused = true;
 
-    bool acceptInput = true;
+    bool acceptInput = false;
 
     // Deal with branches
     Texture textureBranch;
