@@ -223,21 +223,40 @@ int main() {
 
         Time dt = clock.restart();
 
-        if (timeRemaining <= 0.0f) {
-            paused = true;
-            messageText.setString("Out of time!");
 
-            messageText.setOrigin(
-                    textRect.left + textRect.width / 2.0f,
-                    textRect.top + textRect.height / 2.0f
-            );
-            messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
-        } else {
-            timeRemaining -= dt.asSeconds();
-            timeBar.setSize(Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
-        }
 
         if(!paused) {
+            if (timeRemaining <= 0.0f) {
+                paused = true;
+                messageText.setString("Out of time!");
+
+                messageText.setOrigin(
+                        textRect.left + textRect.width / 2.0f,
+                        textRect.top + textRect.height / 2.0f
+                );
+                messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+            } else {
+                timeRemaining -= dt.asSeconds();
+                timeBar.setSize(Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
+            }
+            
+            if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
+                // He die
+                paused = true;
+                acceptInput = false;
+
+                spriteRIP.setPosition(525, 760);
+                spritePlayer.setPosition(2000, 600);
+                messageText.setString("That's a big oof.. you die");
+
+                FloatRect textRect = messageText.getLocalBounds();
+                messageText.setOrigin(
+                        textRect.left + textRect.width / 2.0f,
+                        textRect.top + textRect.height / 2.0f
+                );
+                messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+            }
+
             if (logActive) {
                 spriteLog.setPosition(
                         spriteLog.getPosition().x + (logSpeedX * dt.asSeconds()),
