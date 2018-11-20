@@ -3,6 +3,7 @@
 //
 
 #include "Player.h"
+#include <cmath>
 
 Player::Player() {
     speed  = START_SPEED;
