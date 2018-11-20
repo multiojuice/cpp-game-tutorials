@@ -35,7 +35,7 @@ private:
 public:
     Player();
 
-    void spawn();
+    void spawn(IntRect tempArena, Vector2f tempResolution, int tempTileSize);
     void resetPlayerStats();
 
     bool hit(Time timeHit);
@@ -45,17 +45,23 @@ public:
     Vector2f getCenter();
     float getRotation();
     Sprite getSprite();
+    int getHealth();
 
     void moveLeft();
     void moveRight();
     void moveUp();
     void moveDown();
 
-    void moveLeft();
-    void moveRight();
-    void moveUp();
-    void moveDown();
+    void stopLeft();
+    void stopRight();
+    void stopUp();
+    void stopDown();
 
+    void update(float elapsedTime, Vector2i mousePosition);
+
+    void upgradeSpeed();
+    void upgradeHealth();
+    void increaseHealthLevel();
 };
 
 
