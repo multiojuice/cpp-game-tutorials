@@ -61,7 +61,7 @@ public:
 
     void upgradeSpeed();
     void upgradeHealth();
-    void increaseHealthLevel();
+    void increaseHealthLevel(int amount);
 };
 
 

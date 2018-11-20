@@ -53,7 +53,7 @@ Sprite Player::getSprite() {
     return sprite;
 }
 
-float Player::getPosition() {
+FloatRect Player::getPosition() {
     sprite.getGlobalBounds();
 }
 
@@ -76,10 +76,10 @@ void Player::moveUp() {
 void Player::moveDown() {
     downPressed = true;
 }
-void Player::moveLeft(){
+void Player::moveLeft() {
     leftPressed = true;
 }
-void Player::moveRight(){
+void Player::moveRight() {
     rightPressed = true;
 }
 
@@ -90,12 +90,63 @@ void Player::stopUp() {
 void Player::stopDown() {
     downPressed = false;
 }
-void Player::stopLeft(){
+void Player::stopLeft() {
     leftPressed = false;
 }
-void Player::stopRight(){
+void Player::stopRight() {
     rightPressed = false;
 }
 
 
 // UPDATE THE PLAYER
+void Player::update(float elapsedTime, Vector2i mousePosition) {
+    if (upPressed) {
+        position.y -= speed * elapsedTime;
+    }
+    if (downPressed) {
+        position.y += speed * elapsedTime;
+    }
+    if (leftPressed) {
+        position.x -= speed * elapsedTime;
+    }
+    if (rightPressed) {
+        position.x += speed * elapsedTime;
+    }
+
+    sprite.setPosition(position);
+
+    if (position.x > arena.width - tileSize) {
+        position.x = arena.width - tileSize;
+    }
+
+    if (position.x < arena.left + tileSize) {
+        position.x = arena.left + tileSize;
+    }
+
+    if (position.y > arena.height - tileSize) {
+        position.y = arena.height - tileSize;
+    }
+
+    if (position.y < arena.top + tileSize) {
+        position.y = arena.top + tileSize;
+    }
+
+    float angle = (atan2(mousePosition.y - resolution.y / 2, mousePosition.x - resolution.x / 2) * 180) / 3.141;
+    sprite.setRotation(angle);
+}
+
+void Player::upgradeSpeed() {
+    speed += START_SPEED * .2;
+}
+
+void Player::upgradeHealth() {
+    health += START_HEALTH * .2;
+}
+
+void Player::increaseHealthLevel(int amount) {
+    health += amount;
+
+    if (health > maxHealth) {
+        health = maxHealth;
+    }
+}
